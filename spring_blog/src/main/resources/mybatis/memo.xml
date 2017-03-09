@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="memo"> 
+	<delete id="delete" parameterType="int">
+		DELETE FROM memo
+		WHERE memono = #{memono}
+	</delete>
+	<update id="update" parameterType="MemoDTO">
+		UPDATE memo SET
+		title = #{title}, content = #{content}
+		WHERE memono = #{memono}
+	</update>
+	<update id="upViewcnt" parameterType="int">
+		update memo
+		set viewcnt = viewcnt + 1
+		where memono = #{memono}
+	</update>
+	<select id="read" parameterType="int" resultType="MemoDTO">
+		SELECT memono, title, content, TO_CHAR(wdate,'yyyy-mm-dd')wdate, viewcnt
+		FROM memo
+		WHERE memono = #{memono}
+	</select>
+	<insert id="create" parameterType="MemoDTO">
+		INSERT INTO memo(memono, title, content, wdate)
+		VALUES(memo_seq.nextval, #{title}, #{content}, sysdate)
+	</insert>
+	<select id="total" parameterType="Map" resultType="int">
+		select count(*) from memo
+		<where>
+			<if test="col=='title'">
+				title LIKE '%' || #{word} || '%'
+			</if>
+			<if test="col=='content'">
+				content LIKE '%' || #{word} || '%'
+			</if>
+		</where>
+	</select>
+	<select id="list" parameterType="Map" resultType="MemoDTO">
+		SELECT memono, title, to_char(wdate, 'yyyy-mm-dd') wdate, viewcnt, r
+		FROM(
+			SELECT memono, title, wdate, viewcnt, rownum r
+			FROM (
+				SELECT memono, title, wdate, viewcnt
+				FROM memo
+				<where>
+					<if test="col=='title'">
+						title LIKE '%' || #{word} || '%'
+					</if>
+					<if test="col=='content'">
+						content LIKE '%' || #{word} || '%'
+					</if>
+				</where>				
+				ORDER BY memono DESC
+				)
+			)
+			<![CDATA[
+				WHERE r >= #{sno} and r <= #{eno}
+			]]>
+	</select>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE  tiles-definitions PUBLIC 
+    "-//Aapche Software Foundation//DTD Tiles Configuration 2.0//EN" 
+    "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+
+<tiles-definitions>
+	<definition name="/calendar/list" extends="main">
+		<put-attribute name="title" value="일정목록"></put-attribute>
+		<put-attribute name="body" value="/WEB-INF/views/calendar/list.jsp" />
+	</definition>
+	<definition name="/calendar/calendar" extends="main">
+		<put-attribute name="title" value="일정조회"></put-attribute>
+		<put-attribute name="body" value="/WEB-INF/views/calendar/calendar.jsp" />
+	</definition>
+	<definition name="/calendar/create" extends="main">
+		<put-attribute name="title" value="일정생성"></put-attribute>
+		<put-attribute name="body"
+			value="/WEB-INF/views/calendar/createForm.jsp" />
+	</definition>
+	<definition name="/calendar/update" extends="main">
+		<put-attribute name="title" value="일정수정"></put-attribute>
+		<put-attribute name="body"
+			value="/WEB-INF/views/calendar/updateForm.jsp" />
+	</definition>
+	<definition name="/calendar/delete" extends="main">
+		<put-attribute name="title" value="일정삭제"></put-attribute>
+		<put-attribute name="body"
+			value="/WEB-INF/views/calendar/deleteForm.jsp" />
+	</definition>
+</tiles-definitions>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "category">
+  <insert id="create" parameterType="CategoryVO">
+    <selectKey resultType="int" keyProperty="categoryno" order="BEFORE" >
+      SELECT NVL(MAX(categoryno), 0)+1 as categoryno FROM category
+    </selectKey>
+ 
+    INSERT INTO category(categoryno, title, seqno, visible, ids)
+    VALUES(#{categoryno}, #{title} , #{seqno} , #{visible}, #{ids})
+  </insert>
+ 
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="team"> 
+	<delete id="delete" parameterType="int">
+		delete from team1
+		where no = #{no}
+	</delete>
+	<update id="update" parameterType="TeamDTO">
+		update team1
+		<set>
+			phone = #{phone},
+			zipcode = #{zipcode},
+			address1 = #{address1},
+			address2 = #{address2},
+			skill = #{skillstr},
+			hobby = #{hobby},
+			<if test="filename!=null">
+				filename = #{filename}
+			</if>
+		</set>
+		where no = #{no}
+	</update>
+	<insert id="create" parameterType="TeamDTO">
+		insert into team1
+		(no, name, gender, phone, zipcode, address1, address2, skill, hobby, filename)
+		values ((select nvl(max(no),0)+1 from team1),
+		#{name}, #{gender}, #{phone}, #{zipcode}, #{address1}, #{address2}, #{skillstr}, #{hobby}, #{filename})
+	</insert>
+	<select id="read" parameterType="int" resultType="TeamDTO">
+		select no, name, phone, zipcode, address1, address2, skill as skillstr, hobby, filename, gender from team1
+		where no = #{no}
+	</select>
+	<select id="total" parameterType="Map" resultType="int">
+		select count(*) from team1
+		<where>
+			<choose>
+				<when test="col=='name'">
+					name like '%' || #{word} || '%'
+				</when>
+				<when test="col=='phone'">
+					phone like '%' || #{word} || '%'
+				</when>
+				<when test="col=='skill'">
+					skill like '%' || #{word} || '%'
+				</when>
+			</choose>
+		</where>
+	</select>
+	<select id="list" parameterType="Map" resultType="TeamDTO">
+		select no, name, phone, skill as skillstr, filename, r
+			from (
+				select no, name, phone, skill, filename, rownum r 
+				from ( 
+					select no, name, phone, skill, filename
+						from team1
+							<where>
+								<choose>
+									<when test="col=='name'">
+										name like '%' || #{word} || '%'
+									</when>
+									<when test="col=='phone'">
+										phone like '%' || #{word} || '%'
+									</when>
+									<when test="col=='skill'">
+										skill like '%' || #{word} || '%'
+									</when>
+								</choose>
+							</where>
+						order by no desc
+					)
+				)
+		<![CDATA[
+			where r>=#{sno} and r<=#{eno}
+		]]>
+	</select>
+</mapper>

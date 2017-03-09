@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="address">
+	<select id="read" parameterType="int" resultType="AddressDTO">
+		SELECT no, name, phone, zipcode, address1, address2, TO_CHAR(wdate,'yyyy-mm-dd') wdate
+		FROM address
+		WHERE no = #{no}
+	</select>
+	<insert id="create" parameterType="AddressDTO">
+		INSERT INTO address
+		(no, name, phone, zipcode, address1, address2, wdate)
+		VALUES ((SELECT nvl(max(no),0)+1 FROM address),
+		#{name}, #{phone}, #{zipcode}, #{address1}, #{address2}, sysdate )
+	</insert>
+	<update id="update" parameterType="AddressDTO">
+		UPDATE address SET
+		phone = #{phone},
+		zipcode = #{zipcode},
+		address1 = #{address1},
+		address2 = #{address2}
+		WHERE no = #{no}
+	</update>
+	<delete id="delete" parameterType="int">
+		DELETE FROM address
+		WHERE no = #{no}
+	</delete>
+	<select id="total" parameterType="Map" resultType="int">
+		SELECT COUNT(*) FROM address
+		<where>
+			<if test="con=='name'">
+				name LIKE '%' || #{word} || '%'
+			</if>
+			<if test="con=='phone'">
+				phone LIKE '%' || #{word} || '%'
+			</if>
+			<if test="con=='zipcode'">
+				zipcode LIKE '%' || #{word} || '%'
+			</if>
+		</where>
+	</select>
+	<select id="list" parameterType="Map" resultType="AddressDTO">
+		SELECT no, name, phone, zipcode,to_char(wdate, 'yyyy-mm-dd') wdate, r
+			FROM (SELECT no, name, phone, zipcode, wdate, rownum r
+				FROM  (SELECT no, name, phone, zipcode, wdate
+				FROM address
+					<where>
+						<if test="con=='name'">
+							name LIKE '%' || #{word} || '%'
+						</if>
+						<if test="con=='phone'">
+							phone LIKE '%' || #{word} || '%'
+						</if>
+						<if test="con=='zipcode'">
+							zipcode LIKE '%' || #{word} || '%'
+						</if>
+					</where>
+	    		ORDER BY no DESC
+		 		 	 )
+		 	  )
+		<![CDATA[
+			WHERE r >= #{sno} and r <= #{eno}
+		]]>
+	</select>
+</mapper>
