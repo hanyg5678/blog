@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:choose>
 	<c:when test="${empty sessionScope.id}">
-		<c:set var="str">트와이스 히라이 모모 메인 페이지.(Spring MVC blog)</c:set>
+		<c:set var="str">트와이스 히라이 사나 메인 페이지.(Spring MVC blog)</c:set>
 	</c:when>
 	
 	<c:otherwise>
